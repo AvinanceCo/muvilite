@@ -1,0 +1,19 @@
+node_modules
+npm-debug.log*
+*.log
+
+# Secrets and local config never enter the image — the container is configured
+# entirely through the environment that docker-compose.yml passes in.
+.env
+.env.*
+!.env.example
+
+# User content lives in the `uploads` volume, not in the image.
+src/uploads
+
+.git
+.gitignore
+Dockerfile
+.dockerignore
+MIGRATION.md
+README.md

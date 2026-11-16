@@ -1,0 +1,322 @@
+/**
+ * Global stylesheet and design tokens.
+ *
+ * Purpose: define the theme every component draws from, self-host the Persian
+ *          typeface, and hold the two structural motifs that recur across the
+ *          site (board rows, boarding-pass perforation).
+ * Inputs:  none
+ * Outputs: CSS custom properties exposed to Tailwind v4 as theme tokens
+ * Deps:    tailwindcss v4
+ *
+ * Design direction — the MuviLite mark, at night. The mark is a signal arc in
+ * a single vivid azure (#12b1f0) rising out of pale ice; the interface is that
+ * mark's own palette laid over a navy-black ground, so the product and its logo
+ * read as one thing. Azure is the only accent and it carries three weights:
+ *
+ *   text / hairline  — wayfinding, section titles, active state
+ *   tint             — hover grounds and selected chips
+ *   solid fill       — the one loudest action on the page
+ *
+ * A screen gets exactly one solid fill. Where there is playback that is the play
+ * control, which additionally carries an azure glow; on a screen with no player
+ * it is the confirming action instead. The two never appear together, so the
+ * fill always means "the thing to press here" — which is how playback keeps the
+ * prominence it had when it was red.
+ *
+ * Red survives as `signal` and now means one thing in both applications: an
+ * error, or a destructive act. Never use it to decorate.
+ *
+ * The font is self-hosted deliberately: the site depends on no third-party
+ * host (it was first built for a network with no internet, where a font CDN
+ * could not load). The
+ * files are the legacy app's own Vazir (`-FD` = Persian digits), copied from
+ * legacy-php/src/fonts/vazir.
+ */
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Vazir';
+  src: url('./assets/fonts/Vazir-FD.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazir';
+  src: url('./assets/fonts/Vazir-Bold-FD.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  /*
+   * The ground. Navy-black rather than neutral-black: every surface is mixed
+   * toward the logo's own hue (~199°) so the azure sits *in* the page instead of
+   * on top of it. `ink` is the page, `panel` every raised surface.
+   */
+  --color-ink: #050b12;
+  --color-panel: #0c1826;
+  --color-panel-hi: #122234;
+  --color-line: #1b2e42;
+
+  /* Body text is the logo's palest ice, not white. 17.8:1 on ink. */
+  --color-paper: #e4f8ff;
+  --color-muted: #7c9ab4;
+
+  /*
+   * The mark's azure, sampled from the logo file. The single accent: wayfinding,
+   * structure, focus, and — as a solid fill — playback. 7.7:1 on ink, and `ink`
+   * on an azure fill is the same 7.7:1 the other way round.
+   */
+  --color-azure: #12b1f0;
+  /* The logo's mid tint. Hover and the brighter end of the arc. */
+  --color-ice: #afe9fc;
+  /* Azure held back to a hairline weight: quiet borders and tinted grounds. */
+  --color-azure-dim: #0b3a55;
+
+  /* Errors only. Never decoration, never an action that is not destructive. */
+  --color-signal: #ed1c24;
+
+  --font-sans: 'Vazir', system-ui, sans-serif;
+  /* Latin data — codes, counts, timecodes. Also the departure-board vernacular. */
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --radius-panel: 0.75rem;
+}
+
+/*
+ * Operator-selectable themes (admin › هویت بصری; utils/themes.js). The @theme
+ * block above IS `dark-blue`; each block below re-points the same tokens, so
+ * every utility class follows without knowing a theme exists. The token NAMES
+ * keep the original palette's words — `azure` is "the accent" whatever its hue.
+ * Keep these values in step with utils/themes.js (player, theme-color) and the
+ * backend's SITE_THEMES swatches.
+ *
+ * Contrast: each accent is at least 6:1 on its ground, both ways round, like
+ * the original azure.
+ */
+html[data-theme='dark-red'] {
+  --color-ink: #0b0809;
+  --color-panel: #171113;
+  --color-panel-hi: #21181b;
+  --color-line: #322429;
+  --color-paper: #fbeeee;
+  --color-muted: #a88d92;
+  --color-azure: #ff4d55;
+  --color-ice: #fbb9bd;
+  --color-azure-dim: #4d1519;
+  /* Red is the accent here, so errors move to amber to stay distinguishable. */
+  --color-signal: #f5a524;
+}
+
+html[data-theme='dark-pink'] {
+  --color-ink: #060818;
+  --color-panel: #0e1430;
+  --color-panel-hi: #151d40;
+  --color-line: #222c58;
+  --color-paper: #eef0ff;
+  --color-muted: #8a93c4;
+  --color-azure: #ff4fa3;
+  --color-ice: #ffc0de;
+  --color-azure-dim: #4c1a42;
+  --color-signal: #ed1c24;
+}
+
+/* A true navy — bluer and lighter than dark-blue's navy-black — with orange. */
+html[data-theme='navy-orange'] {
+  --color-ink: #07102a;
+  --color-panel: #0f1a3d;
+  --color-panel-hi: #16244f;
+  --color-line: #233468;
+  --color-paper: #eef3ff;
+  --color-muted: #8f9cc6;
+  --color-azure: #ff8a1f;
+  --color-ice: #ffd0a3;
+  --color-azure-dim: #4a2a0e;
+  /* A brighter red than the default, so errors stay clear of the orange. */
+  --color-signal: #ff3b5c;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-ink);
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    /* Holds the landing page's full-bleed `.brand-wash`. `clip` rather than
+       `hidden`: `hidden` would turn body into a scroll container and break the
+       sticky header. */
+    overflow-x: clip;
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Keyboard focus stays visible everywhere; pointer focus does not ring. */
+  :focus-visible {
+    outline: 2px solid var(--color-azure);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--color-azure);
+    color: var(--color-ink);
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  /* Rails scroll horizontally; the scrollbar itself is noise on a touch device. */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer components {
+  /**
+   * Boarding-pass perforation: the dashed rule that runs from a section title
+   * to its action. Used by the rail and listing headers.
+   */
+  .perforation {
+    flex: 1;
+    height: 1px;
+    background-image: linear-gradient(
+      to left,
+      var(--color-line) 0 4px,
+      transparent 4px 10px
+    );
+    background-size: 10px 1px;
+    background-repeat: repeat-x;
+  }
+
+  /**
+   * The mark's own sweep, as light. Two offset azure glows anchored to the
+   * top-right — where the logo's arc springs from, and the corner an RTL reader
+   * starts at — falling off to nothing well before the first row of cards. It
+   * sits behind content at 40% and never competes with it.
+   *
+   * One instance per page, on the landing hero. Repeating it would turn a
+   * signature into wallpaper.
+   *
+   * STACKING: `isolation` makes this a stacking context, so the z-index:-1 layer
+   * paints below the host's DESCENDANTS but above any earlier SIBLING. The host
+   * is also pulled 2rem upward, so it reaches over whatever precedes it. Any
+   * earlier sibling it must not tint therefore needs its own stacking context to
+   * sit above — see the `relative z-10` on the landing page's top ad slot, which
+   * is there to stop the wash discolouring an advertiser's artwork.
+   */
+  .brand-wash {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .brand-wash::before {
+    content: '';
+    position: absolute;
+    /* Only 2rem is tucked under the sticky header. Hiding more of it puts the
+       brightest part of the arc behind opaque chrome and wastes the gesture. */
+    top: -2rem;
+    height: 24rem;
+    /* Full-bleed, not container-width. The gradient is wider than its centre is
+       from the edge, so a container-width box would slice it and leave a seam
+       down the page. Running to the viewport edge puts the only cut where a cut
+       is invisible. `body` carries `overflow-x: clip` to hold the 100vw — `clip`
+       and not `hidden`, which would make body a scroll container and kill the
+       sticky header. */
+    left: 50%;
+    width: 100vw;
+    transform: translateX(-50%);
+    z-index: -1;
+    opacity: 0.6;
+    pointer-events: none;
+    /*
+     * The gradient peaks at this box's top edge, so that edge is a hard step
+     * unless something covers it. Nothing reliably does: with no ad the hero sits
+     * under the header and the 2rem tuck hides it, but a top ad pushes the hero
+     * down and the step becomes a line across the page. Fading the first 4rem
+     * removes it in both layouts and costs only the very top of the bloom.
+     */
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, black 4rem);
+    mask-image: linear-gradient(to bottom, transparent 0, black 4rem);
+    background:
+      radial-gradient(
+        62% 72% at 84% 0%,
+        color-mix(in oklab, var(--color-azure) 80%, transparent) 0%,
+        transparent 70%
+      ),
+      radial-gradient(
+        46% 62% at 62% 10%,
+        color-mix(in oklab, var(--color-ice) 30%, transparent) 0%,
+        transparent 72%
+      );
+  }
+}
+
+/**
+ * Load reveal for the departures board. One orchestrated moment on the landing
+ * page; the only other thing that animates on entry is a toast (below), where
+ * the motion is what makes the notice register as new.
+ */
+@keyframes board-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.board-row {
+  animation: board-in 0.45s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation-delay: calc(var(--row-index, 0) * 70ms);
+}
+
+/**
+ * Toast entry. Short and small: the notice appears at the edge of the viewport,
+ * away from where the eye is, and a static appearance there is easy to miss —
+ * which is the whole failure this component exists to fix. Suppressed with
+ * everything else under prefers-reduced-motion.
+ */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.toast-in {
+  animation: toast-in 0.18s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .board-row {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

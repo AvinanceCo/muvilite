@@ -1,0 +1,41 @@
+{
+  "name": "muvilite-backend",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "description": "MuviLite backend — Node/Express/MongoDB migration of the legacy PHP media portal",
+  "type": "module",
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "seed": "node scripts/seed.js",
+    "cron:watch-trends": "node scripts/run-watch-trends.js",
+    "transcode:backfill": "node scripts/transcode-backfill.js",
+    "hls:frame-rate": "node scripts/hls-frame-rate-backfill.js"
+  },
+  "overrides": {
+    "uuid": "^11.1.1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "exceljs": "^4.4.0",
+    "express": "^4.19.2",
+    "express-rate-limit": "^7.4.0",
+    "express-validator": "^7.2.0",
+    "helmet": "^7.1.0",
+    "jalaali-js": "^1.2.6",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.6.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
+    "sharp": "^0.35.3",
+    "yauzl": "^3.4.0"
+  }
+}

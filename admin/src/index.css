@@ -1,0 +1,174 @@
+/**
+ * Global stylesheet and design tokens.
+ *
+ * Purpose: define the theme every admin component draws from, self-host the
+ *          Persian typeface, and hold the structural motifs shared with the
+ *          passenger site.
+ * Inputs:  none
+ * Outputs: CSS custom properties exposed to Tailwind v4 as theme tokens
+ * Deps:    tailwindcss v4
+ *
+ * This is the passenger frontend's palette — the MuviLite mark's own azure over
+ * a navy-black ground — deliberately reused so the two applications read as one
+ * product. See frontend/src/index.css for the direction.
+ *
+ * ONE WEIGHT DIFFERS. On the passenger site azure's solid fill is spent on the
+ * play control alone. An admin panel has no play control, so that weight is free
+ * here and **a solid azure fill is the primary action** (save, add, apply).
+ * `--color-signal` stays exactly what it is on the frontend — errors, plus the
+ * destructive acts a panel has and a passenger screen does not (delete,
+ * deactivate). Do not introduce a red "save" or "add" button.
+ *
+ * The font is self-hosted deliberately: the panel depends on no third-party
+ * host (it was first built for a network with no internet, where a font CDN
+ * could not load). Keep it that way — add no external asset host.
+ */
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Vazir';
+  src: url('./assets/fonts/Vazir-FD.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Vazir';
+  src: url('./assets/fonts/Vazir-Bold-FD.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  /*
+   * The ground. Navy-black rather than neutral-black: every surface is mixed
+   * toward the logo's own hue (~199°). `ink` is the page, `panel` every raised
+   * surface. Identical to the frontend's, token for token.
+   */
+  --color-ink: #050b12;
+  --color-panel: #0c1826;
+  --color-panel-hi: #122234;
+  --color-line: #1b2e42;
+
+  /* Body text is the logo's palest ice, not white. 17.8:1 on ink. */
+  --color-paper: #e4f8ff;
+  --color-muted: #7c9ab4;
+
+  /*
+   * The mark's azure, sampled from the logo file. Wayfinding, structure, focus,
+   * and the primary action. 7.7:1 on ink, and `ink` on azure the same in reverse.
+   */
+  --color-azure: #12b1f0;
+  /* The logo's mid tint. Hover and the brighter end of the arc. */
+  --color-ice: #afe9fc;
+  /* Azure held back to a hairline weight: quiet borders and tinted grounds. */
+  --color-azure-dim: #0b3a55;
+
+  /* Destructive actions and errors only. */
+  --color-signal: #ed1c24;
+  --color-signal-dim: #4a1417;
+
+  /*
+   * Confirmation. Used by the status switch and success notices; nowhere else.
+   * Pushed toward teal so it reads as a sibling of the azure rather than an
+   * unrelated green sitting next to it.
+   */
+  --color-verdant: #2fc59b;
+  --color-verdant-dim: #0d3b32;
+
+  --font-sans: 'Vazir', system-ui, sans-serif;
+  /* Latin data — ids, codes, counts, timecodes, IP addresses. */
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+
+  --radius-panel: 0.75rem;
+
+  /* Sidenav width, referenced by the layout's content offset. */
+  --spacing-sidenav: 16rem;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-ink);
+    color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-ink);
+    color: var(--color-paper);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Keyboard focus stays visible everywhere; pointer focus does not ring. */
+  :focus-visible {
+    outline: 2px solid var(--color-azure);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background: var(--color-azure);
+    color: var(--color-ink);
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  /*
+   * The panel is data-dense and tables scroll inside their own container. A
+   * thin styled scrollbar is legible here in a way it would not be on the
+   * passenger touch screen.
+   */
+  .thin-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line) transparent;
+  }
+
+  .thin-scroll::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .thin-scroll::-webkit-scrollbar-thumb {
+    background: var(--color-line);
+    border-radius: 4px;
+  }
+
+  .thin-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer components {
+  /**
+   * Boarding-pass perforation: the dashed rule that runs from a section title
+   * to its action. The passenger site's section divider, reused for page and
+   * card headers so the two applications share a signature.
+   */
+  .perforation {
+    flex: 1;
+    height: 1px;
+    background-image: linear-gradient(
+      to left,
+      var(--color-line) 0 4px,
+      transparent 4px 10px
+    );
+    background-size: 10px 1px;
+    background-repeat: repeat-x;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

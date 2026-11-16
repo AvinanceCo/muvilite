@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Environment — never commit secrets. The legacy app hardcoded its MySQL root
+# password, FCM server key and payment-gateway token in source; this is how that
+# stays fixed.
+.env
+.env.*
+!.env.example
+
+# Uploaded media (user content, not source). The negations keep the
+# products/ users/ categories/ banners/ layout alive through a clone:
+# re-include the directories so git descends, then rescue each .gitkeep.
+src/uploads/**
+!src/uploads/**/
+!src/uploads/**/.gitkeep
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
