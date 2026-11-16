@@ -76,7 +76,6 @@ managed infrastructure, enterprise solutions, and commercial support.
 ## Documentation
 
 - [DEPLOYMENT.md](DEPLOYMENT.md) — installing and running Muvi Lite
-- [DOCKER.md](DOCKER.md) — running Muvi Lite with Docker
 
 ---
 
