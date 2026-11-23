@@ -1,0 +1,30 @@
+Muvi Lite
+Copyright 2026 Avinance
+
+This product is distributed under two licenses.
+
+1. Apache License, Version 2.0 (see LICENSE)
+
+   Everything in this directory and its subdirectories -- the backend, the
+   frontend, the admin panel, their build and deployment scripts, and the
+   documentation -- EXCEPT the Avinance Player packages named in 2 below.
+   This includes Muvi Lite's own code that integrates the player, such as
+   frontend/src/components/player/.
+
+2. Avinance Player -- proprietary (see PLAYER-LICENSE.md)
+
+   frontend/vendor/muvi/avinance-muvi-player-*.tgz
+   frontend/vendor/muvi/avinance-muvi-player-react-*.tgz
+
+   published as the npm packages @avinance/muvi-player and
+   @avinance/muvi-player-react. These are NOT licensed under Apache 2.0.
+   Third-party components bundled inside the player (including hls.js,
+   Apache-2.0, and @dailymotion/vast-client, MIT) are listed in the
+   package's own LICENSE-NOTICES.md, which must stay with it.
+
+Muvi, Muvi Lite, Avinance Player and associated brand assets are trademarks
+or brand identifiers of Avinance or their respective rights holders. Neither
+license grants trademark rights.
+
+Third-party open-source dependencies installed by npm remain under their own
+licenses, as stated in each package.
