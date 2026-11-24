@@ -3,7 +3,7 @@ npm-debug.log*
 *.log
 
 # Secrets and local config never enter the image — the container is configured
-# entirely through the environment that docker-compose.yml passes in.
+# entirely through the environment that compose.yaml passes in.
 .env
 .env.*
 !.env.example
@@ -15,5 +15,4 @@ src/uploads
 .gitignore
 Dockerfile
 .dockerignore
-MIGRATION.md
 README.md

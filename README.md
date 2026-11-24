@@ -75,7 +75,8 @@ managed infrastructure, enterprise solutions, and commercial support.
 
 ## Documentation
 
-- [DEPLOYMENT.md](DEPLOYMENT.md) — installing and running Muvi Lite
+- [Single-server deployment (English)](DEPLOYMENT.md)
+- [راهنمای استقرار روی یک سرور (فارسی)](DEPLOYMENT_FA.md)
 
 ---
 

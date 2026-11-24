@@ -8,7 +8,7 @@
 # Outputs: HTTP on 80.
 
 # ── Stage 1: build ───────────────────────────────────────────────────────────
-FROM node:20-bookworm-slim AS build
+FROM node:22-bookworm-slim AS build
 
 WORKDIR /app
 
@@ -22,13 +22,13 @@ COPY . .
 RUN npm run build
 
 # ── Stage 2: serve ───────────────────────────────────────────────────────────
-FROM nginx:1.27-alpine AS runtime
+FROM nginx:1.30-alpine AS runtime
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Uploaded media is bind-mounted here from the shared `uploads` volume
-# (docker-compose.yml). The directory exists so nginx starts even if it isn't.
+# Uploaded media is mounted here from the shared `uploads` volume
+# (compose.yaml).
 RUN mkdir -p /var/www/uploads
 
 EXPOSE 80

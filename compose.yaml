@@ -1,0 +1,106 @@
+name: muvilite
+
+services:
+  mongo:
+    image: mongo:7.0-jammy
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: muvilite_root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?Set MONGO_ROOT_PASSWORD in .env}
+      MONGO_INITDB_DATABASE: muvilite
+      MONGO_APP_PASSWORD: ${MONGO_APP_PASSWORD:?Set MONGO_APP_PASSWORD in .env}
+    volumes:
+      - mongo-data:/data/db
+      - ./docker/mongo-init.js:/docker-entrypoint-initdb.d/muvilite.js:ro
+    networks:
+      - database
+    healthcheck:
+      # Test the application credentials against the network listener used by the API.
+      test:
+        - CMD-SHELL
+        - >-
+          mongosh --quiet --host mongo --username muvilite --password "$${MONGO_APP_PASSWORD}"
+          --authenticationDatabase muvilite --eval 'db.runCommand({ ping: 1 }).ok || quit(1)'
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 10
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    init: true
+    environment:
+      MONGODB_URI: mongodb://muvilite:${MONGO_APP_PASSWORD:?Set MONGO_APP_PASSWORD in .env}@mongo:27017/muvilite
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in .env}
+      FRONTEND_URL: ${FRONTEND_SITE:?Set FRONTEND_SITE in .env}
+      ADMIN_URL: ${ADMIN_SITE:?Set ADMIN_SITE in .env}
+      MAX_VIDEO_UPLOAD_SIZE_MB: ${MAX_VIDEO_UPLOAD_SIZE_MB:-2048}
+      ENABLE_CRON: ${ENABLE_CRON:-true}
+      WATCH_TREND_CRON: ${WATCH_TREND_CRON:-0 2 * * *}
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      - uploads:/app/src/uploads
+    networks:
+      - default
+      - database
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:4000/api/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 6
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    volumes:
+      - uploads:/var/www/uploads:ro
+
+  admin:
+    build: ./admin
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    volumes:
+      - uploads:/var/www/uploads:ro
+
+  caddy:
+    image: caddy:2.11-alpine
+    restart: unless-stopped
+    environment:
+      FRONTEND_SITE: ${FRONTEND_SITE:?Set FRONTEND_SITE in .env}
+      ADMIN_SITE: ${ADMIN_SITE:?Set ADMIN_SITE in .env}
+    depends_on:
+      frontend:
+        condition: service_healthy
+      admin:
+        condition: service_healthy
+    ports:
+      - "${BIND_ADDRESS:-127.0.0.1}:80:80"
+      - "${BIND_ADDRESS:-127.0.0.1}:443:443"
+      - "${BIND_ADDRESS:-127.0.0.1}:443:443/udp"
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+networks:
+  database:
+    internal: true
+
+volumes:
+  mongo-data:
+  uploads:
+  caddy-data:
+  caddy-config:

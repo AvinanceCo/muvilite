@@ -10,7 +10,7 @@
 # the runtime stage carries neither the toolchain nor the npm cache.
 
 # ── Stage 1: dependencies ────────────────────────────────────────────────────
-FROM node:20-bookworm-slim AS deps
+FROM node:22-bookworm-slim AS deps
 
 # node-gyp fallback for bcrypt/sharp when a prebuild is unavailable.
 RUN apt-get update \
@@ -26,7 +26,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --omit=dev && npm cache clean --force
 
 # ── Stage 2: runtime ─────────────────────────────────────────────────────────
-FROM node:20-bookworm-slim AS runtime
+FROM node:22-bookworm-slim AS runtime
 
 # The HLS transcoder: ffprobe measures every uploaded film/clip and ffmpeg
 # re-encodes it into an adaptive HLS ladder (services/hlsTranscode.service.js).

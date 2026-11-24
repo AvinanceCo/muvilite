@@ -209,7 +209,7 @@ async function seedAdmin(group) {
     isActive: true,
   });
 
-  logger.warn(`Admin user created: ${mobile} / ${ADMIN_PASSWORD} — CHANGE THIS PASSWORD`);
+  logger.info(`Admin user created: ${mobile}`);
   return admin;
 }
 

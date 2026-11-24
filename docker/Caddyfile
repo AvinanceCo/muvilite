@@ -1,0 +1,7 @@
+{$FRONTEND_SITE} {
+	reverse_proxy frontend:80
+}
+
+{$ADMIN_SITE} {
+	reverse_proxy admin:80
+}
